@@ -18,7 +18,15 @@ async function getProductLinks(page: Page) {
   return links.filter((link) => link != null);
 }
 
-async function processProducts(page: Page, links: string[]) {}
+async function processProducts(page: Page, links: string[]) {
+  for (const link of links) {
+    console.log("Opening product:", link);
+    const productLink = links[0]; // first product
+    await page.goto(productLink);
+    const productSummary = page.$(".productSummaryContainer");
+    if (productSummary) console.log(productSummary);
+  }
+}
 
 export async function displayProducts(page: Page, keyword: string) {
   await searchProduct(page, keyword);
