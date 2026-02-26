@@ -10,7 +10,7 @@ export async function addToCart(page: Page, product: Product) {
   try {
     const addToCartButtonElementHandle = await page.$(".bagButton");
     addToCartButtonElementHandle?.click();
-
+    // Wait for the cart link to appear and navigate to the cart page
     await page.waitForSelector(".xfoBagLink");
     const link = await page.$eval(".xfoBagLink", (el) =>
       el.getAttribute("href"),
@@ -35,7 +35,6 @@ export async function showCartDetails(page: Page, product: Product) {
 
   const quantity = await page.$eval(".bagTitleContainer-Qty", (el) => {
     const text = el.textContent?.trim() || "(0 Items)";
-    // text looks like "(1 Item)" or "(3 Items)"
     // extract just the number using regex
     const match = text.match(/\((\d+)/);
     return match ? parseInt(match[1], 10) : 0;

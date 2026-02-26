@@ -29,9 +29,9 @@ async function selectSize(page: Page) {
     );
     for (const option of options) {
       if (!option.classList.contains("outOfStockOption")) {
-        (option as HTMLElement).click(); // just click the element directly
+        (option as HTMLElement).click();
 
-        return option.textContent?.trim(); // return which size was selected
+        return option.textContent?.trim();
       }
     }
     return null;
@@ -78,17 +78,6 @@ async function openProductLink(page: Page, links: string[]) {
       return { title, price, size };
     });
     product.size = await selectSize(page);
-
-    // await page.click(".boxOptionOuter");
-
-    // await page.waitForSelector(
-    //   ".boxOptionOuter.productOptionItem.selectedOption",
-    // );
-
-    // product.size = await page.$eval(
-    //   ".boxOptionOuter.productOptionItem.selectedOption",
-    //   (el) => el.textContent?.trim() || "N/A",
-    // );
 
     console.log("product: ", product);
     return product;
