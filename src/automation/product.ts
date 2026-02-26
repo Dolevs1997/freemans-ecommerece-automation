@@ -3,9 +3,10 @@ import { Page } from "puppeteer";
 async function searchProduct(page: Page, keyword: string) {
   await page.waitForSelector("input[type='text']");
   await page.type("input[type='text']", keyword);
-  await page.keyboard.press("Enter");
-  await page.waitForNavigation();
-  console.log("Search results loaded");
+  await Promise.all([
+    page.keyboard.press("Enter"),
+    page.waitForNavigation({ waitUntil: "networkidle2", timeout: 60000 }),
+  ]);
 }
 
 async function getProductLinks(page: Page) {
@@ -17,19 +18,88 @@ async function getProductLinks(page: Page) {
 
   return links.filter((link) => link != null);
 }
+async function selectSize(page: Page) {
+  // Wait for size options to appear
+  await page.waitForSelector(".productOptionsContainer");
 
-async function processProducts(page: Page, links: string[]) {
-  for (const link of links) {
-    console.log("Opening product:", link);
-    const productLink = links[0]; // first product
-    await page.goto(productLink);
-    const productSummary = page.$(".productSummaryContainer");
-    if (productSummary) console.log(productSummary);
+  // Find and click the first size that is NOT out of stock
+  const selected = await page.evaluate(() => {
+    const options = document.querySelectorAll(
+      ".boxOptionOuter > .productOptionItem",
+    );
+    for (const option of options) {
+      if (!option.classList.contains("outOfStockOption")) {
+        (option as HTMLElement).click(); // just click the element directly
+
+        return option.textContent?.trim(); // return which size was selected
+      }
+    }
+    return null;
+  });
+
+  if (!selected) {
+    throw new Error("No available sizes found for this product");
+  }
+
+  console.log("Selected size:", selected);
+
+  await page.waitForFunction(
+    () => {
+      const selected = document.querySelector(
+        ".productOptionItem.selectedOption",
+      );
+      return selected && !selected.classList.contains("disabledOption");
+    },
+    { timeout: 15000 },
+  );
+
+  return selected;
+}
+async function openProductLink(page: Page, links: string[]) {
+  if (links.length === 0) {
+    throw new Error("No products found");
+  }
+  const productLink = links[0];
+  console.log("Opening product:", productLink);
+  try {
+    await page.goto(productLink, { waitUntil: "networkidle2", timeout: 60000 });
+    await page.waitForSelector(".productSummaryContainer", {
+      timeout: 15000,
+    });
+
+    const product = await page.evaluate(() => {
+      const title =
+        document
+          .querySelector(".productNameContainer > h1")
+          ?.textContent?.trim() || "";
+      const price =
+        document.querySelector(".productPrice")?.textContent?.trim() || "";
+      const size = "N/A";
+      return { title, price, size };
+    });
+    product.size = await selectSize(page);
+
+    // await page.click(".boxOptionOuter");
+
+    // await page.waitForSelector(
+    //   ".boxOptionOuter.productOptionItem.selectedOption",
+    // );
+
+    // product.size = await page.$eval(
+    //   ".boxOptionOuter.productOptionItem.selectedOption",
+    //   (el) => el.textContent?.trim() || "N/A",
+    // );
+
+    console.log("product: ", product);
+    return product;
+  } catch (error) {
+    throw new Error("Failed to open product page: " + error);
   }
 }
 
 export async function displayProducts(page: Page, keyword: string) {
   await searchProduct(page, keyword);
   const links = await getProductLinks(page);
-  await processProducts(page, links);
+  const product = await openProductLink(page, links);
+  return product;
 }
