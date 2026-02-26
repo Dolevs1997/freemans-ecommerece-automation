@@ -1,5 +1,6 @@
 import puppeteer, { Browser, Page } from "puppeteer";
 import { displayProducts } from "./automation/product";
+import { addToCart } from "./automation/cart";
 async function initWebsite(): Promise<{ page: Page }> {
   let browser: Browser | null = null;
 
@@ -26,7 +27,8 @@ async function main() {
   try {
     const { page } = await initWebsite();
 
-    await displayProducts(page, "dress");
+    const product = await displayProducts(page, "dress");
+    await addToCart(page, product);
   } catch (err) {
     console.error("Fatal error:", err);
   }
