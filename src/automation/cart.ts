@@ -46,8 +46,8 @@ export async function showCartDetails(page: Page, product: Product) {
   if (quantity === 0) {
     throw new Error("Cart is empty - product was not added successfully");
   }
-  await page.waitForSelector(".bagPrimaryButton");
-  const checkout = await page.$eval(".bagPrimaryButton", (el) => {});
+  const checkout = await page.waitForSelector(".bagPrimaryButton");
+  checkout?.click();
   console.log(
     "Product in cart:",
     product.title,
