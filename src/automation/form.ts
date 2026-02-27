@@ -1,6 +1,6 @@
 import { Page } from "puppeteer";
 import { FormField } from "../models/formFields";
-import { getAllFormFields } from "../database/db";
+import { getAllFormFields } from "../database/queries";
 async function fillField(page: Page, field: FormField) {
   try {
     await page.waitForSelector(field.selector, { timeout: 10000 });

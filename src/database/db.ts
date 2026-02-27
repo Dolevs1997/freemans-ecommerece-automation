@@ -16,10 +16,4 @@ db.exec(`
   )
 `);
 
-export function getAllFormFields(pageName: string): FormField[] {
-  return db
-    .prepare("SELECT * FROM form_fields WHERE page = ?")
-    .all(pageName) as FormField[];
-}
-
 export default db;
