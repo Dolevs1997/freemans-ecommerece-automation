@@ -30,7 +30,6 @@ export async function addToCart(page: Page, product: Product) {
 }
 
 export async function showCartDetails(page: Page, product: Product) {
-  console.log("Product added to cart: ", product);
   await page.waitForSelector(".bagTitleContainer-Qty");
 
   const quantity = await page.$eval(".bagTitleContainer-Qty", (el) => {
@@ -40,19 +39,9 @@ export async function showCartDetails(page: Page, product: Product) {
     return match ? parseInt(match[1], 10) : 0;
   });
 
-  console.log("Cart quantity:", quantity);
-
   if (quantity === 0) {
     throw new Error("Cart is empty - product was not added successfully");
   }
   const checkout = await page.waitForSelector(".bagPrimaryButton");
   checkout?.click();
-  console.log(
-    "Product in cart:",
-    product.title,
-    "| Size:",
-    product.size,
-    "| Price:",
-    product.price,
-  );
 }

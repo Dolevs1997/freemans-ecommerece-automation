@@ -9,14 +9,17 @@ const db = new Database(DB_PATH);
 db.exec(`
   CREATE TABLE IF NOT EXISTS form_fields (
     id        INTEGER PRIMARY KEY AUTOINCREMENT,
+    page      TEXT    NOT NULL,
     selector  TEXT    NOT NULL,
     property  TEXT    NOT NULL,
     value     TEXT    NOT NULL
   )
 `);
 
-export function getAllFormFields(): FormField[] {
-  return db.prepare("SELECT * FROM form_fields").all() as FormField[];
+export function getAllFormFields(pageName: string): FormField[] {
+  return db
+    .prepare("SELECT * FROM form_fields WHERE page = ?")
+    .all(pageName) as FormField[];
 }
 
 export default db;

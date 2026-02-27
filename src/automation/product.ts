@@ -42,8 +42,6 @@ async function selectSize(page: Page) {
     throw new Error("No available sizes found for this product");
   }
 
-  console.log("Selected size:", selected);
-
   await page.waitForFunction(
     () => {
       const selected = document.querySelector(
@@ -61,7 +59,6 @@ async function openProductLink(page: Page, links: string[]) {
     throw new Error("No products found");
   }
   const productLink = links[0];
-  console.log("Opening product:", productLink);
   try {
     await page.goto(productLink, { waitUntil: "networkidle2", timeout: 60000 });
     await page.waitForSelector(".productSummaryContainer", {
@@ -80,7 +77,6 @@ async function openProductLink(page: Page, links: string[]) {
     });
     product.size = await selectSize(page);
 
-    console.log("product: ", product);
     return product;
   } catch (error) {
     throw new Error("Failed to open product page: " + error);

@@ -3,6 +3,7 @@ import { displayProducts } from "./automation/product";
 import { addToCart } from "./automation/cart";
 import { seedDatabase } from "./database/seed";
 import { fillForm } from "./automation/form";
+import { fillCheckoutForm } from "./automation/checkout";
 async function initWebsite(): Promise<{ page: Page }> {
   let browser: Browser | null = null;
 
@@ -39,9 +40,12 @@ async function main() {
     if (registerLink) {
       registerLink.click();
       // Step 5: fill form with data from DB
-      await fillForm(page);
+      await fillForm(page, "register");
       await page.$("#applybutton").then((button) => button?.click());
       //Step 6: Proceed to checkout
+
+      // Step 7: fill checkout form
+      await fillCheckoutForm(page, "payment");
     }
   } catch (err) {
     console.error("Fatal error:", err);
