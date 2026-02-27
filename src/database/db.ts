@@ -15,4 +15,8 @@ db.exec(`
   )
 `);
 
+export function getAllFormFields(): FormField[] {
+  return db.prepare("SELECT * FROM form_fields").all() as FormField[];
+}
+
 export default db;

@@ -1,12 +1,13 @@
 import { Page } from "puppeteer";
 
 async function searchProduct(page: Page, keyword: string) {
-  await page.waitForSelector("input[type='text']");
+  await page.$("input[type='text']");
   await page.type("input[type='text']", keyword);
-  await Promise.all([
-    page.keyboard.press("Enter"),
-    page.waitForNavigation({ waitUntil: "networkidle2", timeout: 60000 }),
-  ]);
+
+  (page.keyboard.press("Enter"),
+    await Promise.all([
+      page.waitForNavigation({ waitUntil: "networkidle2", timeout: 10000 }),
+    ]));
 }
 
 async function getProductLinks(page: Page) {

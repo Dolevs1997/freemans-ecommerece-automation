@@ -2,51 +2,47 @@ import db from "./db";
 import { FormField } from "../models/formFields";
 
 const fields: FormField[] = [
-  // Registration form fields
+  { selector: "select[name='Title']", property: "select", value: "Mr" },
+  { selector: "input[name='FirstName']", property: "value", value: "Steve" },
+  { selector: "input[name='LastName']", property: "value", value: "Rosenblum" },
+  { selector: "select[name='dob_day']", property: "select", value: "15" },
+  { selector: "select[name='dob_month']", property: "select", value: "08" },
+  { selector: "select[name='dob_year']", property: "select", value: "1990" },
   {
-    selector: "select[name='title']", // update after inspecting
-    property: "select",
-    value: "Mr",
-  },
-  {
-    selector: "input[name='firstName']", // update after inspecting
-    property: "value",
-    value: "Steve",
-  },
-  {
-    selector: "input[name='surname']", // update after inspecting
-    property: "value",
-    value: "Rosenblum",
-  },
-  {
-    selector: "select[name='dobDay']", // update after inspecting
-    property: "select",
-    value: "15",
-  },
-  {
-    selector: "select[name='dobMonth']", // update after inspecting
-    property: "select",
-    value: "6",
-  },
-  {
-    selector: "select[name='dobYear']", // update after inspecting
-    property: "select",
-    value: "1990",
-  },
-  {
-    selector: "input[name='contactNumber']", // update after inspecting
+    selector: "input[name='DayTimeTelephone']",
     property: "value",
     value: "07700900123",
   },
   {
-    selector: "input[name='houseNumber']", // update after inspecting
+    selector: "input[name='houseId']",
     property: "value",
-    value: "123",
+    value: "Buckingham Palace",
+  },
+  { selector: "input[name='postCode']", property: "value", value: "SW1A 1AA" },
+  {
+    selector: "select[name='addressSelect']",
+    property: "select",
+    value: "Buckingham Palace#",
   },
   {
-    selector: "input[name='postcode']", // update after inspecting
+    selector: "input[name='Email']",
     property: "value",
-    value: "SW1A 1AA",
+    value: "steve.rosenblum@example.com",
+  },
+  {
+    selector: "input[name='ConfirmEmail']",
+    property: "value",
+    value: "steve.rosenblum@example.com",
+  },
+  {
+    selector: "input[name='Password']",
+    property: "value",
+    value: "Steve1990!",
+  },
+  {
+    selector: "input[name='confirmPassword']",
+    property: "value",
+    value: "Steve1990!",
   },
 ];
 
