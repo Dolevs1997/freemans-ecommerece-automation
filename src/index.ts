@@ -4,7 +4,12 @@ import { addToCart } from "./automation/cart";
 import { seedDatabase } from "./database/seed";
 import { fillForm } from "./automation/form";
 import { fillCheckoutForm } from "./automation/checkout";
-async function initWebsite(): Promise<{ page: Page }> {
+import {
+  searchByField,
+  updateFormField,
+  deleteRecord,
+} from "./database/queries";
+async function initWebsite(): Promise<{ page: Page; browser: Browser }> {
   let browser: Browser | null = null;
 
   try {
@@ -15,7 +20,7 @@ async function initWebsite(): Promise<{ page: Page }> {
     const page = await browser.newPage();
     page.setDefaultNavigationTimeout(60000); // Sets default navigation timeout to 60 seconds
     await page.goto("https://www.freemans.com", { waitUntil: "networkidle2" });
-    return { page };
+    return { page, browser };
   } catch (error) {
     console.error("Error init website: ", error);
     if (browser) {
@@ -30,8 +35,11 @@ async function main() {
   try {
     // Step 1: seed DB first
     seedDatabase();
+    searchByField("FirstName");
+    updateFormField("input[name='FirstName']", "John");
+
     // Step 2: open browser and navigate to website
-    const { page } = await initWebsite();
+    const { page, browser } = await initWebsite();
     // Step 3: find product
     const product = await displayProducts(page, "dress");
     // Step 4: add to cart → navigates to checkout
@@ -46,9 +54,13 @@ async function main() {
 
       // Step 7: fill checkout form
       await fillCheckoutForm(page, "payment");
+
+      browser.close();
+      deleteRecord();
     }
   } catch (err) {
     console.error("Fatal error:", err);
+    deleteRecord();
   }
 }
 main();
